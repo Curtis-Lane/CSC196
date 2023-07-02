@@ -8,6 +8,10 @@
 //using namespace std;
 
 int main() {
+	ane::CreateWindow("CSC196", 800, 600);
+	std::cin.get();
+
+	/*
 	ane::memoryTracker.DisplayInfo();
 	int* intPtr = new int;
 	ane::memoryTracker.DisplayInfo();
@@ -18,7 +22,6 @@ int main() {
 	for(int i = 0; i < 1000000; i++) {}
 	std::cout << timer.GetElapsedSeconds() << std::endl;
 
-	/*
 	std::chrono::time_point start = std::chrono::high_resolution_clock::now();
 	for(int i = 0; i < 10000000; i++) {}
 	std::chrono::time_point end = std::chrono::high_resolution_clock::now();
