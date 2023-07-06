@@ -7,9 +7,23 @@
 
 //using namespace std;
 
-int main() {
-	ane::CreateWindow("CSC196", 800, 600);
-	std::cin.get();
+int main(int argc, char* argv[]) {
+	ane::Renderer renderer;
+	renderer.Initialize();
+	renderer.CreateWindow("CSC196", 800, 600);
+
+	while(true) {
+		renderer.SetColor(0, 0, 0, 0);
+		renderer.BeginFrame();
+
+		for(int i = 0; i < 100000; i++) {
+			renderer.SetColor(ane::random(0, 255), ane::random(0, 255), ane::random(0, 255), 0);
+			renderer.DrawPoint(ane::random(0, renderer.GetWidth()), ane::random(0, renderer.GetHeight()));
+			renderer.DrawLine(ane::random(0, renderer.GetWidth()), ane::random(0, renderer.GetHeight()), ane::random(0, renderer.GetWidth()), ane::random(0, renderer.GetHeight()));
+		}
+
+		renderer.EndFrame();
+	}
 
 	/*
 	ane::memoryTracker.DisplayInfo();
@@ -47,4 +61,5 @@ int main() {
 		std::cout << ane::random(10, 20) << std::endl;
 	}
 	*/
+	return 0;
 }
