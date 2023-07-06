@@ -35,7 +35,15 @@ namespace ane {
 		SDL_RenderDrawLine(this->renderer, x1, y1, x2, y2);
 	}
 
+	void Renderer::DrawLine(float x1, float y1, float x2, float y2) {
+		SDL_RenderDrawLineF(this->renderer, x1, y1, x2, y2);
+	}
+
 	void Renderer::DrawPoint(int x, int y) {
 		SDL_RenderDrawPoint(this->renderer, x, y);
+	}
+
+	void Renderer::DrawPoint(float x, float y) {
+		SDL_RenderDrawPointF(this->renderer, x, y);
 	}
 }

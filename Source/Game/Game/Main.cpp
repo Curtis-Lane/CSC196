@@ -1,26 +1,72 @@
 #include <iostream>
-#include "Core/Random.h"
-#include "Core/FileIO.h"
-#include "Core/Memory.h"
-#include "Core/Time.h"
+#include <vector>
+#include "Core/Core.h"
 #include "Renderer/Renderer.h"
 
-//using namespace std;
+class Star {
+	public:
+		ane::Vector2 pos;
+		ane::Vector2 vel;
+
+	public:
+		Star(const ane::Vector2& pos, const ane::Vector2& vel) : pos{pos}, vel{vel} {}
+
+		void Update(int width, int height) {
+			this->pos += this->vel;
+
+			if(this->pos.x > width) {
+				this->pos.x = 0;
+			} else if(this->pos.x < 0) {
+				this->pos.x = width;
+			}
+
+			if(this->pos.y > height) {
+				this->pos.y = 0;
+			} else if(this->pos.y < 0) {
+				this->pos.y = height;
+			}
+		}
+
+		void Draw(ane::Renderer& renderer) {
+			renderer.DrawPoint(this->pos.x, this->pos.y);
+		}
+};
 
 int main(int argc, char* argv[]) {
+	ane::seedRandom((unsigned int) time(nullptr));
+
 	ane::Renderer renderer;
 	renderer.Initialize();
 	renderer.CreateWindow("CSC196", 800, 600);
+
+	std::vector<Star> stars;
+
+	for(int i = 0; i < 5000; i++) {
+		ane::Vector2 pos(ane::Vector2(ane::random(renderer.GetWidth()), ane::random(renderer.GetHeight())));
+		ane::Vector2 vel(ane::randomf(1, 4), 0.0f);
+
+		stars.push_back(Star(pos, vel));
+	}
 
 	while(true) {
 		renderer.SetColor(0, 0, 0, 0);
 		renderer.BeginFrame();
 
-		for(int i = 0; i < 100000; i++) {
+		for(Star& star : stars) {
+			star.Update(renderer.GetWidth(), renderer.GetHeight());
+
 			renderer.SetColor(ane::random(0, 255), ane::random(0, 255), ane::random(0, 255), 0);
-			renderer.DrawPoint(ane::random(0, renderer.GetWidth()), ane::random(0, renderer.GetHeight()));
-			renderer.DrawLine(ane::random(0, renderer.GetWidth()), ane::random(0, renderer.GetHeight()), ane::random(0, renderer.GetWidth()), ane::random(0, renderer.GetHeight()));
+			star.Draw(renderer);
+			//renderer.DrawPoint(star.pos.x, star.pos.y);
 		}
+
+		//for(int i = 0; i < 1000; i++) {
+		//	ane::Vector2 pos(ane::random(renderer.GetWidth()), ane::random(renderer.GetHeight()));
+
+		//	renderer.SetColor(ane::random(0, 255), ane::random(0, 255), ane::random(0, 255), 0);
+		//	renderer.DrawPoint(pos.x, pos.y);
+		//	//renderer.DrawLine(ane::random(0, renderer.GetWidth()), ane::random(0, renderer.GetHeight()), ane::random(0, renderer.GetWidth()), ane::random(0, renderer.GetHeight()));
+		//}
 
 		renderer.EndFrame();
 	}
