@@ -31,4 +31,6 @@ namespace ane {
 		public:
 			float x, y;
 	};
+
+	using vec2 = Vector2;
 }
