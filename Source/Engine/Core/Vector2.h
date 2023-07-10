@@ -28,6 +28,12 @@ namespace ane {
 			Vector2& operator /= (float s) {x /= s; y /= s; return *this;}
 			Vector2& operator *= (float s) {x *= s; y *= s; return *this;}
 
+			float LengthSqr() {return (x * x) + (y * y);}
+			float Length() {return sqrt(LengthSqr());}
+
+			Vector2 Normalized() {return *this / Length();}
+			void Normalize() {*this /= Length();}
+
 		public:
 			float x, y;
 	};
