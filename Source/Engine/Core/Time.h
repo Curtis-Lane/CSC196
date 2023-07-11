@@ -11,17 +11,28 @@ namespace ane {
 
 	public:
 		Time() : 
-			m_startTime{ clock::now() }
+			startTime{ clock::now() },
+			frameTime{ clock::now() }
 		{}
 
-		void Reset() { m_startTime = clock::now(); }
+		void Tick();
+		void Reset() { this->startTime = clock::now(); }
 
 		clock_rep GetElapsedNanoseconds();
 		clock_rep GetElapsedMicroseconds();
 		clock_rep GetElapsedMilliseconds();
 		float GetElapsedSeconds();
 
+		float GetTime() const {return this->time;}
+		float GetDeltaTime() const {return this->deltaTime;}
+
 	private:
-		clock::time_point m_startTime;
+		float time;
+		float deltaTime;
+
+		clock::time_point startTime;
+		clock::time_point frameTime;
 	};
+
+	extern Time globalTime;
 }
