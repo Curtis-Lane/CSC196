@@ -4,8 +4,6 @@
 #include "Input/InputSystem.h"
 #include <iostream>
 #include <vector>
-//#include <thread>
-
 
 class Star {
 	public:
@@ -62,8 +60,9 @@ int main(int argc, char* argv[]) {
 	
 
 
-	ane::vec2 position(400, 300);
+	ane::Transform transform({400, 300}, 0.0f, 10.0f);
 	float speed = 200.0f;
+	float turnRate = ane::DegreesToRadians(180.0f);
 
 	// Main game loop
 	bool quit = false;
@@ -76,19 +75,27 @@ int main(int argc, char* argv[]) {
 			quit = true;
 		}
 
-		ane::vec2 direction;
-		if(inputSystem.GetKeyDown(SDL_SCANCODE_W)) {
-			direction.y = -1;
-		} else if(inputSystem.GetKeyDown(SDL_SCANCODE_S)) {
-			direction.y = 1;
-		}
+		float rotate = 0.0f;
 		if(inputSystem.GetKeyDown(SDL_SCANCODE_A)) {
-			direction.x = -1;
+			rotate += -1.0f;
 		} else if(inputSystem.GetKeyDown(SDL_SCANCODE_D)) {
-			direction.x = 1;
+			rotate += 1.0f;
+		}
+		transform.rotation += rotate * turnRate * ane::globalTime.GetDeltaTime();
+
+		float thrust = 0.0f;
+		if(inputSystem.GetKeyDown(SDL_SCANCODE_W)) {
+			thrust = 1;
+		} else if(inputSystem.GetKeyDown(SDL_SCANCODE_S)) {
+			thrust = -1;
+		} else {
+			thrust = 0;
 		}
 
-		position += direction * speed * ane::globalTime.GetDeltaTime();
+		ane::vec2 forward = ane::vec2(0, -1).Rotate(transform.rotation);
+		transform.position += forward * speed * thrust * ane::globalTime.GetDeltaTime();
+		//transform.position.x = ane::Wrap(transform.position.x, renderer.GetWidth());
+		//transform.position.y = ane::Wrap(transform.position.y, renderer.GetHeight());
 
 		/*
 		if(inputSystem.GetMouseButtonDown(0)) {
@@ -111,7 +118,7 @@ int main(int argc, char* argv[]) {
 		renderer.BeginFrame();
 
 		renderer.SetColor(ane::random(0, 255), 255, 0, 0);
-		model.Draw(renderer, position, 10.0f);
+		model.Draw(renderer, transform.position, transform.rotation, transform.scale);
 
 		
 		for(Star& star : stars) {
@@ -119,12 +126,9 @@ int main(int argc, char* argv[]) {
 
 			renderer.SetColor(ane::random(0, 255), ane::random(0, 255), ane::random(0, 255), 0);
 			star.Draw(renderer);
-			//renderer.DrawPoint(star.pos.x, star.pos.y);
 		}
 		
 		renderer.EndFrame();
-
-		//std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 	
 

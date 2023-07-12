@@ -30,15 +30,29 @@ namespace ane {
 			Vector2& operator /= (float s) {x /= s; y /= s; return *this;}
 			Vector2& operator *= (float s) {x *= s; y *= s; return *this;}
 
-			float LengthSqr() {return (x * x) + (y * y);}
-			float Length() {return sqrt(LengthSqr());}
+			float LengthSqr() const {return (x * x) + (y * y);}
+			float Length() const {return sqrt(LengthSqr());}
 
-			Vector2 Normalized() {return *this / Length();}
+			float DistanceSqr(const Vector2& v) const {return (v - *this).LengthSqr();}
+			float Distance(const Vector2& v) const {return (v - *this).Length();}
+
+			Vector2 Normalized() const {return *this / Length();}
 			void Normalize() {*this /= Length();}
+
+			float Angle() const {return std::atan2f(this->y, this->x);}
+			Vector2 Rotate(float radians) const;
 
 		public:
 			float x, y;
 	};
+
+	inline Vector2 Vector2::Rotate(float radians) const {
+		float x = this->x * std::cos(radians) - this->y * std::sin(radians);
+		float y = this->x * std::sin(radians) + this->y * std::cos(radians);
+
+		return Vector2(x, y);
+	}
+
 	inline std::istream& operator >> (std::istream& stream, Vector2& v) {
 		std::string line;
 		std::getline(stream, line);
