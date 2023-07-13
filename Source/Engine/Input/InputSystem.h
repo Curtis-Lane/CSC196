@@ -32,4 +32,6 @@ namespace ane {
 			std::array<uint8_t, 3> mouseButtonState;
 			std::array<uint8_t, 3> prevMouseButtonState;
 	};
+
+	extern InputSystem globalInputSystem;
 }

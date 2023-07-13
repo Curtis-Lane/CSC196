@@ -1,6 +1,8 @@
 #include "InputSystem.h"
 
 namespace ane {
+	InputSystem globalInputSystem;
+
 	bool InputSystem::Initialize() {
 		int numKeys;
 		// Get pointer to SDL keyboard states and number of keys

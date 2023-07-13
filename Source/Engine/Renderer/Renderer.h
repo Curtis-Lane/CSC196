@@ -33,4 +33,6 @@ namespace ane {
 			SDL_Renderer* renderer = nullptr;
 			SDL_Window* window = nullptr;
 	};
+
+	extern Renderer globalRenderer;
 }

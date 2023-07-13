@@ -2,6 +2,8 @@
 #include "Renderer/Renderer.h"
 #include "Renderer/Model.h"
 #include "Input/InputSystem.h"
+#include "Player.h"
+#include "Enemy.h"
 #include <iostream>
 #include <vector>
 
@@ -38,12 +40,10 @@ int main(int argc, char* argv[]) {
 	ane::seedRandom((unsigned int) time(nullptr));
 	ane::setFilePath("assets");
 
-	ane::Renderer renderer;
-	renderer.Initialize();
-	renderer.CreateWindow("CSC196", 800, 600);
+	ane::globalRenderer.Initialize();
+	ane::globalRenderer.CreateWindow("CSC196", 800, 600);
 
-	ane::InputSystem inputSystem;
-	inputSystem.Initialize();
+	ane::globalInputSystem.Initialize();
 
 	//std::vector<ane::vec2> points{{0, 0}, {0, 10}, {10, 0}, {0, 0}};
 	ane::Model model;
@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
 	std::vector<Star> stars;
 
 	for(int i = 0; i < 5000; i++) {
-		ane::Vector2 pos(ane::Vector2(ane::random(renderer.GetWidth()), ane::random(renderer.GetHeight())));
+		ane::Vector2 pos(ane::Vector2(ane::random(ane::globalRenderer.GetWidth()), ane::random(ane::globalRenderer.GetHeight())));
 		ane::Vector2 vel(ane::randomf(100, 250), 0.0f);
 
 		stars.push_back(Star(pos, vel));
@@ -62,73 +62,56 @@ int main(int argc, char* argv[]) {
 
 	ane::Transform transform({400, 300}, 0.0f, 10.0f);
 	float speed = 200.0f;
-	float turnRate = ane::DegreesToRadians(180.0f);
+	constexpr float turnRate = ane::DegreesToRadians(180.0f);
+
+	Player player(speed, turnRate, transform, model);
+
+	std::vector<Enemy> enemies;
+	for(int i = 0; i < 100; i++) {
+		Enemy enemy(300, turnRate, {{ane::random(ane::globalRenderer.GetWidth()), ane::random(ane::globalRenderer.GetHeight())}, ane::randomf(ane::TwoPi), 6}, model);
+		enemies.push_back(enemy);
+	}
 
 	// Main game loop
 	bool quit = false;
-	ane::vec2 mouseCoords{0, 0};
+	//ane::vec2 mouseCoords{0, 0};
 	while(!quit) {
 		ane::globalTime.Tick();
 
-		inputSystem.Update();
-		if(inputSystem.GetKeyDown(SDL_SCANCODE_ESCAPE)) {
+		ane::globalInputSystem.Update();
+		if(ane::globalInputSystem.GetKeyDown(SDL_SCANCODE_ESCAPE)) {
 			quit = true;
 		}
 
-		float rotate = 0.0f;
-		if(inputSystem.GetKeyDown(SDL_SCANCODE_A)) {
-			rotate += -1.0f;
-		} else if(inputSystem.GetKeyDown(SDL_SCANCODE_D)) {
-			rotate += 1.0f;
-		}
-		transform.rotation += rotate * turnRate * ane::globalTime.GetDeltaTime();
+		player.Update(ane::globalTime.GetDeltaTime());
 
-		float thrust = 0.0f;
-		if(inputSystem.GetKeyDown(SDL_SCANCODE_W)) {
-			thrust = 1;
-		} else if(inputSystem.GetKeyDown(SDL_SCANCODE_S)) {
-			thrust = -1;
-		} else {
-			thrust = 0;
+		for(Enemy& enemy : enemies) {
+			enemy.Update(ane::globalTime.GetDeltaTime());
 		}
 
-		ane::vec2 forward = ane::vec2(0, -1).Rotate(transform.rotation);
-		transform.position += forward * speed * thrust * ane::globalTime.GetDeltaTime();
-		//transform.position.x = ane::Wrap(transform.position.x, renderer.GetWidth());
-		//transform.position.y = ane::Wrap(transform.position.y, renderer.GetHeight());
+		ane::globalRenderer.SetColor(0, 0, 0, 0);
+		ane::globalRenderer.BeginFrame();
 
-		/*
-		if(inputSystem.GetMouseButtonDown(0)) {
-			std::cout << "Left Mouse Pressed" << std::endl;
-		} else if(inputSystem.GetMouseButtonDown(1)) {
-			std::cout << "Middle Mouse Pressed" << std::endl;
-		} else if(inputSystem.GetMouseButtonDown(2)) {
-			std::cout << "Right Mouse Pressed" << std::endl;
+		ane::globalRenderer.SetColor(ane::random(0, 255), 255, 0, 0);
+
+		player.Draw(ane::globalRenderer);
+
+		for(Enemy& enemy : enemies) {
+			ane::globalRenderer.SetColor(ane::random(0, 100), ane::random(0, 100), ane::random(0, 100), 0);
+			enemy.Draw(ane::globalRenderer);
 		}
 
-		if(mouseCoords.x != inputSystem.GetMousePosition().x && mouseCoords.y != inputSystem.GetMousePosition().y) {
-			std::cout << "Mouse X: " << inputSystem.GetMousePosition().x << std::endl;
-			std::cout << "Mouse Y: " << inputSystem.GetMousePosition().y << std::endl;
-		}
-
-		mouseCoords = inputSystem.GetMousePosition();
-		*/
-
-		renderer.SetColor(0, 0, 0, 0);
-		renderer.BeginFrame();
-
-		renderer.SetColor(ane::random(0, 255), 255, 0, 0);
-		model.Draw(renderer, transform.position, transform.rotation, transform.scale);
+		//model.Draw(ane::globalRenderer, transform.position, transform.rotation, transform.scale);
 
 		
 		for(Star& star : stars) {
-			star.Update(renderer.GetWidth(), renderer.GetHeight());
+			star.Update(ane::globalRenderer.GetWidth(), ane::globalRenderer.GetHeight());
 
-			renderer.SetColor(ane::random(0, 255), ane::random(0, 255), ane::random(0, 255), 0);
-			star.Draw(renderer);
+			ane::globalRenderer.SetColor(ane::random(0, 255), ane::random(0, 255), ane::random(0, 255), 0);
+			star.Draw(ane::globalRenderer);
 		}
 		
-		renderer.EndFrame();
+		ane::globalRenderer.EndFrame();
 	}
 	
 

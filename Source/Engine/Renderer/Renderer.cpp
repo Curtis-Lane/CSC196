@@ -1,6 +1,8 @@
 #include "Renderer.h"
 
 namespace ane {
+	Renderer globalRenderer;
+
 	bool Renderer::Initialize() {
 		SDL_Init(SDL_INIT_VIDEO);
 
