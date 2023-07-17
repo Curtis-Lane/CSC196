@@ -3,8 +3,10 @@
 #include "Renderer/Model.h"
 #include "Input/InputSystem.h"
 #include "Audio/AudioSystem.h"
+#include "Framework/Scene.h"
 #include "Player.h"
 #include "Enemy.h"
+
 #include <iostream>
 #include <vector>
 
@@ -62,18 +64,13 @@ int main(int argc, char* argv[]) {
 		stars.push_back(Star(pos, vel));
 	}
 	
+	ane::Scene scene;
 
+	scene.Add(new Player(200.0f, ane::Pi, {{400, 300}, 0.0f, 10.0f}, model));
 
-	ane::Transform transform({400, 300}, 0.0f, 10.0f);
-	float speed = 200.0f;
-	constexpr float turnRate = ane::DegreesToRadians(180.0f);
-
-	Player player(speed, turnRate, transform, model);
-
-	std::vector<Enemy> enemies;
-	for(int i = 0; i < 100; i++) {
-		Enemy enemy(300, turnRate, {{ane::random(ane::globalRenderer.GetWidth()), ane::random(ane::globalRenderer.GetHeight())}, ane::randomf(ane::TwoPi), 6}, model);
-		enemies.push_back(enemy);
+	for(int i = 0; i < 10; i++) {
+		Enemy* enemy = new Enemy(300, ane::DegreesToRadians(180.0f), {{ane::random(ane::globalRenderer.GetWidth()), ane::random(ane::globalRenderer.GetHeight())}, ane::randomf(ane::TwoPi), 6}, model);
+		scene.Add(enemy);
 	}
 
 	// Main game loop
@@ -85,24 +82,17 @@ int main(int argc, char* argv[]) {
 		ane::globalInputSystem.Update();
 
 		ane::globalAudioSystem.Update();
-
+		 
 		if(ane::globalInputSystem.GetKeyDown(SDL_SCANCODE_ESCAPE)) {
 			quit = true;
 		}
 
-		if(ane::globalInputSystem.GetKeyDown(SDL_SCANCODE_SPACE) && !ane::globalInputSystem.GetPreviousKeyDown(SDL_SCANCODE_SPACE)) {
-			ane::globalAudioSystem.PlayOneShot("hiss3");
-		}
-
-		player.Update(ane::globalTime.GetDeltaTime());
-
-		for(Enemy& enemy : enemies) {
-			enemy.Update(ane::globalTime.GetDeltaTime());
-		}
+		scene.Update(ane::globalTime.GetDeltaTime());
 
 		ane::globalRenderer.SetColor(0, 0, 0, 0);
 		ane::globalRenderer.BeginFrame();
 
+		/*
 		ane::globalRenderer.SetColor(ane::random(0, 255), 255, 0, 0);
 
 		player.Draw(ane::globalRenderer);
@@ -111,6 +101,11 @@ int main(int argc, char* argv[]) {
 			ane::globalRenderer.SetColor(ane::random(0, 100), ane::random(0, 100), ane::random(0, 100), 0);
 			enemy.Draw(ane::globalRenderer);
 		}
+		*/
+
+		ane::globalRenderer.SetColor(ane::random(0, 255), 255, 0, 0);
+
+		scene.Draw(ane::globalRenderer);
 
 		//model.Draw(ane::globalRenderer, transform.position, transform.rotation, transform.scale);
 

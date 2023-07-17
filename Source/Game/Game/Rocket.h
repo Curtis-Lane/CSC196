@@ -1,13 +1,14 @@
 #pragma once
 
 #include "Framework/Actor.h"
+#include "Audio/AudioSystem.h"
 
-class Enemy : public ane::Actor {
+class Rocket : public ane::Actor {
 	public:
-	Enemy(float speed, float turnRate, const ane::Transform& transform, const ane::Model& model) :
+	Rocket(float speed, const ane::Transform& transform, const ane::Model& model) :
 		ane::Actor(transform, model) {
 		this->speed = speed;
-		this->turnRate = turnRate;
+		ane::globalAudioSystem.PlayOneShot("hiss3");
 	}
 
 	void Update(float deltaTime) override;

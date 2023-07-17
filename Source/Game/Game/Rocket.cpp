@@ -1,6 +1,6 @@
-#include "Enemy.h"
+#include "Rocket.h"
 
-void Enemy::Update(float deltaTime) {
+void Rocket::Update(float deltaTime) {
 	ane::vec2 forward = ane::vec2(0, -1).Rotate(this->transform.rotation);
 	this->transform.position += forward * speed * ane::globalTime.GetDeltaTime();
 	this->transform.position.x = ane::Wrap(this->transform.position.x, static_cast<float> (ane::globalRenderer.GetWidth()));
