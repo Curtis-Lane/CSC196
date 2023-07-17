@@ -2,6 +2,7 @@
 #include "Renderer/Renderer.h"
 #include "Renderer/Model.h"
 #include "Input/InputSystem.h"
+#include "Audio/AudioSystem.h"
 #include "Player.h"
 #include "Enemy.h"
 #include <iostream>
@@ -45,6 +46,9 @@ int main(int argc, char* argv[]) {
 
 	ane::globalInputSystem.Initialize();
 
+	ane::globalAudioSystem.Initialize();
+	ane::globalAudioSystem.AddAudio("hiss3", "hiss3.wav");
+
 	//std::vector<ane::vec2> points{{0, 0}, {0, 10}, {10, 0}, {0, 0}};
 	ane::Model model;
 	model.Load("creeper.txt");
@@ -79,8 +83,15 @@ int main(int argc, char* argv[]) {
 		ane::globalTime.Tick();
 
 		ane::globalInputSystem.Update();
+
+		ane::globalAudioSystem.Update();
+
 		if(ane::globalInputSystem.GetKeyDown(SDL_SCANCODE_ESCAPE)) {
 			quit = true;
+		}
+
+		if(ane::globalInputSystem.GetKeyDown(SDL_SCANCODE_SPACE) && !ane::globalInputSystem.GetPreviousKeyDown(SDL_SCANCODE_SPACE)) {
+			ane::globalAudioSystem.PlayOneShot("hiss3");
 		}
 
 		player.Update(ane::globalTime.GetDeltaTime());
