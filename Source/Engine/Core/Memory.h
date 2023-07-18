@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 namespace ane {
 	struct MemoryAllocation {
 		void* address;
@@ -18,5 +20,5 @@ namespace ane {
 			size_t numAllocations = 0;
 	};
 
-	extern MemoryTracker memoryTracker;
+	extern MemoryTracker globalMemoryTracker;
 }

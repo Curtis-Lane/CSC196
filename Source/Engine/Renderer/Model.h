@@ -1,8 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "Core/Vector2.h"
-#include "Core/Transform.h"
+#include "Core/Core.h"
 #include "Renderer.h"
 
 namespace ane {
@@ -17,5 +16,6 @@ namespace ane {
 
 		private:
 			std::vector<vec2> points;
+			Color color;
 	};
 }

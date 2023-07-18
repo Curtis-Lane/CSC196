@@ -9,6 +9,8 @@ namespace ane {
 
 		std::istringstream stream(buffer);
 
+		stream >> this->color;
+
 		std::string line;
 		std::getline(stream, line);
 
@@ -28,6 +30,8 @@ namespace ane {
 		if(points.empty()) {
 			return;
 		}
+
+		renderer.SetColor(Color::ToInt(this->color.r), Color::ToInt(this->color.g), Color::ToInt(this->color.b), Color::ToInt(this->color.a));
 
 		for(size_t i = 0; i < (points.size() - 1); i++) {
 			vec2 p1 = (points[i] * scale).Rotate(rotation) + position;

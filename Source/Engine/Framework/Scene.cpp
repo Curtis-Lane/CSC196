@@ -5,24 +5,24 @@
 
 namespace ane {
 	void Scene::Update(float deltaTime) {
-		for(Actor* actor : this->actors) {
+		for(std::unique_ptr<Actor>& actor : this->actors) {
 			actor->Update(deltaTime);
 		}
 	}
 
 	void Scene::Draw(Renderer& renderer) {
-		for(Actor* actor : this->actors) {
+		for(std::unique_ptr<Actor>& actor : this->actors) {
 			actor->Draw(renderer);
 		}
 	}
 
-	void Scene::Add(Actor* actor) {
+	void Scene::Add(std::unique_ptr<Actor> actor) {
 		actor->scene = this;
-		this->actors.push_back(actor);
+		this->actors.push_back(std::move(actor));
 	}
 
 	void Scene::Remove(Actor* actor) {
-		this->actors.remove(actor);
+		//this->actors.remove(actor);
 	}
 
 	void Scene::RemoveAll() {

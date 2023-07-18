@@ -1,19 +1,19 @@
 #include "Memory.h"
 #include <iostream>
 
-ane::MemoryTracker ane::memoryTracker;
+ane::MemoryTracker ane::globalMemoryTracker;
 
 void* operator new (size_t size) {
 	void* ptr = malloc(size);
 
-	ane::memoryTracker.Add(ptr, size);
+	ane::globalMemoryTracker.Add(ptr, size);
 	//std::cout << "allocated: " << size << "\n" << std::endl;
 
 	return ptr;
 }
 
 void operator delete (void* address, size_t size) {
-	ane::memoryTracker.Remove(address, size);
+	ane::globalMemoryTracker.Remove(address, size);
 
 	//std::cout << "deallocated: " << size << "\n" << std::endl;
 

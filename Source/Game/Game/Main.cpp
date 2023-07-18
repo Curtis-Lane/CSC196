@@ -40,6 +40,12 @@ class Star {
 };
 
 int main(int argc, char* argv[]) {
+	{
+		//std::unique_ptr<int> up = std::make_unique<int>(10);
+	}
+
+	ane::globalMemoryTracker.DisplayInfo();
+
 	ane::seedRandom((unsigned int) time(nullptr));
 	ane::setFilePath("assets");
 
@@ -66,11 +72,13 @@ int main(int argc, char* argv[]) {
 	
 	ane::Scene scene;
 
-	scene.Add(new Player(200.0f, ane::Pi, {{400, 300}, 0.0f, 10.0f}, model));
+	std::unique_ptr<Player> player = std::make_unique<Player>(200.0f, ane::Pi, ane::Transform(ane::vec2(400, 300), 0.0f, 10.0f), model);
+
+	scene.Add(std::move(player));
 
 	for(int i = 0; i < 10; i++) {
-		Enemy* enemy = new Enemy(300, ane::DegreesToRadians(180.0f), {{ane::random(ane::globalRenderer.GetWidth()), ane::random(ane::globalRenderer.GetHeight())}, ane::randomf(ane::TwoPi), 6}, model);
-		scene.Add(enemy);
+		std::unique_ptr enemy = std::make_unique<Enemy>(300.0f, ane::Pi, ane::Transform(ane::vec2(ane::random(ane::globalRenderer.GetWidth()), ane::random(ane::globalRenderer.GetHeight())), ane::randomf(ane::TwoPi), 6), model);
+		scene.Add(std::move(enemy));
 	}
 
 	// Main game loop
@@ -157,5 +165,10 @@ int main(int argc, char* argv[]) {
 		std::cout << ane::random(10, 20) << std::endl;
 	}
 	*/
+	stars.clear();
+	scene.RemoveAll();
+
+	ane::globalMemoryTracker.DisplayInfo();
+
 	return 0;
 }

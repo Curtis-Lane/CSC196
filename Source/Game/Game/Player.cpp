@@ -25,8 +25,8 @@ void Player::Update(float deltaTime) {
 	// Fire weapon
 	if(ane::globalInputSystem.GetKeyDown(SDL_SCANCODE_SPACE) && !ane::globalInputSystem.GetPreviousKeyDown(SDL_SCANCODE_SPACE)) {
 		ane::Transform rocketTransform(this->transform.position, this->transform.rotation, this->transform.scale / 2);
-		Rocket* rocket = new Rocket(400.0f, rocketTransform, this->model);
-		this->scene->Add(rocket);
+		std::unique_ptr<Rocket> rocket = std::make_unique<Rocket>(400.0f, rocketTransform, this->model);
+		this->scene->Add(std::move(rocket));
 	}
 
 	ane::vec2 forward = ane::vec2(0, -1).Rotate(this->transform.rotation);

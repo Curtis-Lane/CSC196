@@ -13,13 +13,13 @@ namespace ane {
 			void Update(float deltaTime);
 			void Draw(Renderer& renderer);
 
-			void Add(Actor* actor);
+			void Add(std::unique_ptr<Actor> actor);
 			void Remove(Actor* actor);
 			void RemoveAll();
 
 			//friend class Actor;
 
 		private:
-			std::list<Actor*> actors;
+			std::list<std::unique_ptr<Actor>> actors;
 	};
 }
