@@ -5,6 +5,8 @@
 #include "Rocket.h"
 
 void Player::Update(float deltaTime) {
+	Actor::Update(deltaTime);
+
 	float rotate = 0.0f;
 	if(ane::globalInputSystem.GetKeyDown(SDL_SCANCODE_A)) {
 		rotate += -1.0f;

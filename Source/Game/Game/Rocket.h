@@ -8,6 +8,7 @@ class Rocket : public ane::Actor {
 	Rocket(float speed, const ane::Transform& transform, const ane::Model& model) :
 		ane::Actor(transform, model) {
 		this->speed = speed;
+		this->lifeSpan = 2.0f;
 		ane::globalAudioSystem.PlayOneShot("hiss3");
 	}
 

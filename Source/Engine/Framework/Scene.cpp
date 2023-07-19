@@ -5,8 +5,22 @@
 
 namespace ane {
 	void Scene::Update(float deltaTime) {
+		/*
 		for(std::unique_ptr<Actor>& actor : this->actors) {
 			actor->Update(deltaTime);
+		}
+		*/
+
+		// Remove destroyed actors
+		auto iter = this->actors.begin();
+		while(iter != this->actors.end()) {
+			(*iter)->Update(deltaTime);
+
+			if((*iter)->destroyed) {
+				iter = this->actors.erase(iter);
+			} else {
+				iter++;
+			}
 		}
 	}
 
@@ -19,10 +33,6 @@ namespace ane {
 	void Scene::Add(std::unique_ptr<Actor> actor) {
 		actor->scene = this;
 		this->actors.push_back(std::move(actor));
-	}
-
-	void Scene::Remove(Actor* actor) {
-		//this->actors.remove(actor);
 	}
 
 	void Scene::RemoveAll() {

@@ -10,13 +10,18 @@ namespace ane {
 			Actor() = default;
 			Actor(const ane::Transform& transform, const ane::Model& model) {this->transform = transform; this->model = model;}
 
-			virtual void Update(float deltaTime) = 0;
+			virtual void Update(float deltaTime);
 			virtual void Draw(ane::Renderer& renderer);
 
 			class Scene* scene = nullptr;
 
-		protected:
+			friend class Scene;
 			ane::Transform transform;
+
+		protected:
+			bool destroyed = false;
+			float lifeSpan = -1.0f;
+
 			ane::Model model;
 	};
 }

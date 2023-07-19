@@ -25,6 +25,8 @@ namespace ane {
 			int GetWidth() const {return this->width;}
 			int GetHeight() const {return this->height;}
 
+			friend class Text;
+
 		private:
 			std::string title;
 			int width = 0;

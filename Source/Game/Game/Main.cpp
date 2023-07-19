@@ -1,6 +1,8 @@
 #include "Core/Core.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/Model.h"
+#include "Renderer/Font.h"
+#include "Renderer/Text.h"
 #include "Input/InputSystem.h"
 #include "Audio/AudioSystem.h"
 #include "Framework/Scene.h"
@@ -40,11 +42,10 @@ class Star {
 };
 
 int main(int argc, char* argv[]) {
-	{
-		//std::unique_ptr<int> up = std::make_unique<int>(10);
-	}
+	ane::MemoryTracker::Initialize();
 
-	ane::globalMemoryTracker.DisplayInfo();
+	int* p = new int;
+	delete p;
 
 	ane::seedRandom((unsigned int) time(nullptr));
 	ane::setFilePath("assets");
@@ -57,7 +58,11 @@ int main(int argc, char* argv[]) {
 	ane::globalAudioSystem.Initialize();
 	ane::globalAudioSystem.AddAudio("hiss3", "hiss3.wav");
 
-	//std::vector<ane::vec2> points{{0, 0}, {0, 10}, {10, 0}, {0, 0}};
+	std::shared_ptr<ane::Font> font = std::make_shared<ane::Font>("ArcadeClassic.ttf", 24);
+
+	std::unique_ptr<ane::Text> text = std::make_unique<ane::Text>(font);
+	text->Create(ane::globalRenderer, "NEUMONT", ane::Color(1.0f, 1.0f, 1.0f, 1.0f));
+
 	ane::Model model;
 	model.Load("creeper.txt");
 	
@@ -77,13 +82,12 @@ int main(int argc, char* argv[]) {
 	scene.Add(std::move(player));
 
 	for(int i = 0; i < 10; i++) {
-		std::unique_ptr enemy = std::make_unique<Enemy>(300.0f, ane::Pi, ane::Transform(ane::vec2(ane::random(ane::globalRenderer.GetWidth()), ane::random(ane::globalRenderer.GetHeight())), ane::randomf(ane::TwoPi), 6), model);
+		std::unique_ptr enemy = std::make_unique<Enemy>(ane::randomf(75.0f, 150.0f), ane::Pi, ane::Transform(ane::vec2(ane::random(ane::globalRenderer.GetWidth()), ane::random(ane::globalRenderer.GetHeight())), ane::randomf(ane::TwoPi), 6), model);
 		scene.Add(std::move(enemy));
 	}
 
 	// Main game loop
 	bool quit = false;
-	//ane::vec2 mouseCoords{0, 0};
 	while(!quit) {
 		ane::globalTime.Tick();
 
@@ -100,23 +104,11 @@ int main(int argc, char* argv[]) {
 		ane::globalRenderer.SetColor(0, 0, 0, 0);
 		ane::globalRenderer.BeginFrame();
 
-		/*
-		ane::globalRenderer.SetColor(ane::random(0, 255), 255, 0, 0);
-
-		player.Draw(ane::globalRenderer);
-
-		for(Enemy& enemy : enemies) {
-			ane::globalRenderer.SetColor(ane::random(0, 100), ane::random(0, 100), ane::random(0, 100), 0);
-			enemy.Draw(ane::globalRenderer);
-		}
-		*/
-
 		ane::globalRenderer.SetColor(ane::random(0, 255), 255, 0, 0);
 
 		scene.Draw(ane::globalRenderer);
 
-		//model.Draw(ane::globalRenderer, transform.position, transform.rotation, transform.scale);
-
+		text->Draw(ane::globalRenderer, 400, 300);
 		
 		for(Star& star : stars) {
 			star.Update(ane::globalRenderer.GetWidth(), ane::globalRenderer.GetHeight());
@@ -128,47 +120,8 @@ int main(int argc, char* argv[]) {
 		ane::globalRenderer.EndFrame();
 	}
 	
-
-	/*
-	ane::memoryTracker.DisplayInfo();
-	int* intPtr = new int;
-	ane::memoryTracker.DisplayInfo();
-	delete intPtr;
-	ane::memoryTracker.DisplayInfo();
-
-	ane::Time timer;
-	for(int i = 0; i < 1000000; i++) {}
-	std::cout << timer.GetElapsedSeconds() << std::endl;
-
-	std::chrono::time_point start = std::chrono::high_resolution_clock::now();
-	for(int i = 0; i < 10000000; i++) {}
-	std::chrono::time_point end = std::chrono::high_resolution_clock::now();
-
-	std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() << std::endl;
-	*/
-
-	/*
-	std::cout << ane::getFilePath() << std::endl;
-	ane::setFilePath("Assets");
-	std::cout << ane::getFilePath() << std::endl;
-
-	size_t size = 0;
-	ane::getFileSize("game.txt", size);
-	std::cout << size << "\n" << std::endl;
-
-	std::string buffer = "";
-	ane::readFile("game.txt", buffer);
-	std::cout << buffer << "\n" << std::endl;
-
-	ane::seedRandom((unsigned int) time(nullptr));
-	for (int i = 0; i < 10; i++) {
-		std::cout << ane::random(10, 20) << std::endl;
-	}
-	*/
 	stars.clear();
 	scene.RemoveAll();
-
-	ane::globalMemoryTracker.DisplayInfo();
 
 	return 0;
 }
