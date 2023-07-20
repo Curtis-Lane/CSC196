@@ -8,3 +8,9 @@ void Rocket::Update(float deltaTime) {
 	this->transform.position.x = ane::Wrap(this->transform.position.x, static_cast<float> (ane::globalRenderer.GetWidth()));
 	this->transform.position.y = ane::Wrap(this->transform.position.y, static_cast<float> (ane::globalRenderer.GetHeight()));
 }
+
+void Rocket::OnCollision(Actor* other) {
+	if(other->tag != this->tag) {
+		this->destroyed = true;
+	}
+}

@@ -5,13 +5,7 @@
 
 namespace ane {
 	void Scene::Update(float deltaTime) {
-		/*
-		for(std::unique_ptr<Actor>& actor : this->actors) {
-			actor->Update(deltaTime);
-		}
-		*/
-
-		// Remove destroyed actors
+		// Remove destroyed actors and update non-destroyed actors
 		auto iter = this->actors.begin();
 		while(iter != this->actors.end()) {
 			(*iter)->Update(deltaTime);
@@ -20,6 +14,20 @@ namespace ane {
 				iter = this->actors.erase(iter);
 			} else {
 				iter++;
+			}
+		}
+
+		// Check collisions
+		for(auto iter1 = this->actors.begin(); iter1 != this->actors.end(); iter1++) {
+			for(auto iter2 = std::next(iter1, 1); iter2 != this->actors.end(); iter2++) {
+				float distance = (*iter1)->transform.position.Distance((*iter2)->transform.position);
+				float radius = (*iter1)->model->GetRadius() + (*iter2)->model->GetRadius();
+
+				if(distance <= radius) {
+					// boom
+					(*iter1)->OnCollision(iter2->get());
+					(*iter2)->OnCollision(iter1->get());
+				}
 			}
 		}
 	}

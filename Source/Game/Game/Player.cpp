@@ -28,6 +28,7 @@ void Player::Update(float deltaTime) {
 	if(ane::globalInputSystem.GetKeyDown(SDL_SCANCODE_SPACE) && !ane::globalInputSystem.GetPreviousKeyDown(SDL_SCANCODE_SPACE)) {
 		ane::Transform rocketTransform(this->transform.position, this->transform.rotation, this->transform.scale / 2);
 		std::unique_ptr<Rocket> rocket = std::make_unique<Rocket>(400.0f, rocketTransform, this->model);
+		rocket->tag = "Player";
 		this->scene->Add(std::move(rocket));
 	}
 
@@ -35,5 +36,14 @@ void Player::Update(float deltaTime) {
 	this->transform.position += forward * speed * thrust * ane::globalTime.GetDeltaTime();
 	this->transform.position.x = ane::Wrap(this->transform.position.x, static_cast<float> (ane::globalRenderer.GetWidth()));
 	this->transform.position.y = ane::Wrap(this->transform.position.y, static_cast<float> (ane::globalRenderer.GetHeight()));
+}
+
+void Player::OnCollision(Actor* other) {
+	if(dynamic_cast<Rocket*>(other) != nullptr && other->tag == "Enemy") {
+		health -= 10;
+	}
+	if(health <= 0) {
+		this->destroyed = true;
+	}
 }
  

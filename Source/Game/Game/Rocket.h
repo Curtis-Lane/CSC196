@@ -5,7 +5,7 @@
 
 class Rocket : public ane::Actor {
 	public:
-	Rocket(float speed, const ane::Transform& transform, const ane::Model& model) :
+	Rocket(float speed, const ane::Transform& transform, std::shared_ptr<ane::Model> model) :
 		ane::Actor(transform, model) {
 		this->speed = speed;
 		this->lifeSpan = 2.0f;
@@ -13,6 +13,7 @@ class Rocket : public ane::Actor {
 	}
 
 	void Update(float deltaTime) override;
+	void OnCollision(Actor* other) override;
 
 	private:
 	float speed = 0.0f;

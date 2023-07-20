@@ -14,8 +14,11 @@ namespace ane {
 			void Draw(Renderer& renderer, const vec2& position, float rotation, float scale);
 			void Draw(Renderer& renderer, const Transform& transform);
 
+			float GetRadius();
+
 		private:
 			std::vector<vec2> points;
 			Color color;
+			float radius = 0.0f;
 	};
 }

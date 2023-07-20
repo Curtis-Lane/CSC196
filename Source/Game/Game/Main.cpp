@@ -1,6 +1,6 @@
 #include "Core/Core.h"
 #include "Renderer/Renderer.h"
-#include "Renderer/Model.h"
+#include "Renderer/ModelManager.h"
 #include "Renderer/Font.h"
 #include "Renderer/Text.h"
 #include "Input/InputSystem.h"
@@ -62,9 +62,6 @@ int main(int argc, char* argv[]) {
 
 	std::unique_ptr<ane::Text> text = std::make_unique<ane::Text>(font);
 	text->Create(ane::globalRenderer, "NEUMONT", ane::Color(1.0f, 1.0f, 1.0f, 1.0f));
-
-	ane::Model model;
-	model.Load("creeper.txt");
 	
 	std::vector<Star> stars;
 
@@ -77,15 +74,17 @@ int main(int argc, char* argv[]) {
 	
 	ane::Scene scene;
 
-	std::unique_ptr<Player> player = std::make_unique<Player>(200.0f, ane::Pi, ane::Transform(ane::vec2(400, 300), 0.0f, 10.0f), model);
+	std::unique_ptr<Player> player = std::make_unique<Player>(200.0f, ane::Pi, ane::Transform(ane::vec2(400, 300), 0.0f, 10.0f), ane::globalModelManager.Get("creeper.txt"));
+	player->tag = "Player";
 
 	scene.Add(std::move(player));
-
+	
 	for(int i = 0; i < 10; i++) {
-		std::unique_ptr enemy = std::make_unique<Enemy>(ane::randomf(75.0f, 150.0f), ane::Pi, ane::Transform(ane::vec2(ane::random(ane::globalRenderer.GetWidth()), ane::random(ane::globalRenderer.GetHeight())), ane::randomf(ane::TwoPi), 6), model);
+		std::unique_ptr enemy = std::make_unique<Enemy>(ane::randomf(75.0f, 150.0f), ane::Pi, ane::Transform(ane::vec2(ane::random(ane::globalRenderer.GetWidth()), ane::random(ane::globalRenderer.GetHeight())), ane::randomf(ane::TwoPi), 6), ane::globalModelManager.Get("enemy.txt"));
+		enemy->tag = "Enemy";
 		scene.Add(std::move(enemy));
 	}
-
+	
 	// Main game loop
 	bool quit = false;
 	while(!quit) {

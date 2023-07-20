@@ -1,5 +1,7 @@
 #include "Time.h"
 
+#include "MathUtils.h"
+
 namespace ane {
 	Time globalTime;
 
@@ -9,6 +11,7 @@ namespace ane {
 
 		duration = clock::now() - this->frameTime;
 		this->deltaTime = duration.count() / static_cast<float>(clock_duration::period::den);
+		this->deltaTime = Min(this->deltaTime, 1.0f);
 
 		this->frameTime = clock::now();
 	}

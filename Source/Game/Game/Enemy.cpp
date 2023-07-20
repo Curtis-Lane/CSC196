@@ -23,6 +23,16 @@ void Enemy::Update(float deltaTime) {
 		// Fire weapon
 		ane::Transform rocketTransform(this->transform.position, this->transform.rotation, this->transform.scale * 0.66f);
 		std::unique_ptr<Rocket> rocket = std::make_unique<Rocket>(400.0f, rocketTransform, this->model);
+		rocket->tag = "Enemy";
 		this->scene->Add(std::move(rocket));
+	}
+}
+
+void Enemy::OnCollision(Actor* other) {
+	if(dynamic_cast<Rocket*>(other) != nullptr && other->tag == "Player") {
+		health -= 10;
+	}
+	if(health <= 0) {
+		this->destroyed = true;
 	}
 }

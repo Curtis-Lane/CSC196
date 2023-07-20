@@ -44,4 +44,15 @@ namespace ane {
 	void Model::Draw(Renderer& renderer, const Transform& transform) {
 		Draw(renderer, transform.position, transform.rotation, transform.scale);
 	}
+
+	float Model::GetRadius() {
+		if(this->radius == 0.0f) {
+			for(Vector2 point : this->points) {
+				float length = point.Length();
+				this->radius = Max(this->radius, length);
+			}
+		}
+
+		return this->radius;
+	}
 }

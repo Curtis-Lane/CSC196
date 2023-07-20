@@ -4,24 +4,30 @@
 #include "Renderer/Renderer.h"
 #include "Renderer/Model.h"
 
+#include <memory>
+
 namespace ane {
 	class Actor {
 		public:
 			Actor() = default;
-			Actor(const ane::Transform& transform, const ane::Model& model) {this->transform = transform; this->model = model;}
+			Actor(const ane::Transform& transform, std::shared_ptr<Model> model) {this->transform = transform; this->model = model;}
 
 			virtual void Update(float deltaTime);
 			virtual void Draw(ane::Renderer& renderer);
+
+			float GetRadius() {return this->model->GetRadius() * this->transform.scale;}
+			virtual void OnCollision(Actor* other) {;}
 
 			class Scene* scene = nullptr;
 
 			friend class Scene;
 			ane::Transform transform;
+			std::string tag;
 
 		protected:
 			bool destroyed = false;
 			float lifeSpan = -1.0f;
 
-			ane::Model model;
+			std::shared_ptr<Model> model;
 	};
 }
