@@ -21,7 +21,7 @@ namespace ane {
 		for(auto iter1 = this->actors.begin(); iter1 != this->actors.end(); iter1++) {
 			for(auto iter2 = std::next(iter1, 1); iter2 != this->actors.end(); iter2++) {
 				float distance = (*iter1)->transform.position.Distance((*iter2)->transform.position);
-				float radius = (*iter1)->model->GetRadius() + (*iter2)->model->GetRadius();
+				float radius = (*iter1)->GetRadius() + (*iter2)->GetRadius();
 
 				if(distance <= radius) {
 					// boom

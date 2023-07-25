@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include "Player.h"
 #include "Rocket.h"
+#include "Framework/Game.h"
 #include "Framework/Scene.h"
 
 void Enemy::Update(float deltaTime) {
@@ -33,6 +34,7 @@ void Enemy::OnCollision(Actor* other) {
 		health -= 10;
 	}
 	if(health <= 0) {
+		this->game->AddPoints(100);
 		this->destroyed = true;
 	}
 }

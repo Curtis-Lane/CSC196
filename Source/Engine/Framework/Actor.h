@@ -20,6 +20,8 @@ namespace ane {
 
 			class Scene* scene = nullptr;
 
+			class Game* game = nullptr;
+
 			friend class Scene;
 			ane::Transform transform;
 			std::string tag;

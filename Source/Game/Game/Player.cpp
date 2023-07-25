@@ -2,6 +2,7 @@
 
 #include "Input/InputSystem.h"
 #include "Framework/Scene.h"
+#include "SpaceGame.h"
 #include "Rocket.h"
 
 void Player::Update(float deltaTime) {
@@ -43,6 +44,9 @@ void Player::OnCollision(Actor* other) {
 		health -= 10;
 	}
 	if(health <= 0) {
+		this->game->SetLives(this->game->GetLives() - 1);
+		dynamic_cast<SpaceGame*>(this->game)->SetState(SpaceGame::State::PlayerDead);
+		
 		this->destroyed = true;
 	}
 }

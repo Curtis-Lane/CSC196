@@ -16,6 +16,6 @@ class Rocket : public ane::Actor {
 	void OnCollision(Actor* other) override;
 
 	private:
-	float speed = 0.0f;
-	float turnRate = 0.0f;
+		float speed = 0.0f;
+		float turnRate = 0.0f;
 };

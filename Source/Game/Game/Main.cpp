@@ -8,6 +8,7 @@
 #include "Framework/Scene.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "SpaceGame.h"
 
 #include <iostream>
 #include <vector>
@@ -44,9 +45,6 @@ class Star {
 int main(int argc, char* argv[]) {
 	ane::MemoryTracker::Initialize();
 
-	int* p = new int;
-	delete p;
-
 	ane::seedRandom((unsigned int) time(nullptr));
 	ane::setFilePath("assets");
 
@@ -54,35 +52,17 @@ int main(int argc, char* argv[]) {
 	ane::globalRenderer.CreateWindow("CSC196", 800, 600);
 
 	ane::globalInputSystem.Initialize();
-
 	ane::globalAudioSystem.Initialize();
-	ane::globalAudioSystem.AddAudio("hiss3", "hiss3.wav");
 
-	std::shared_ptr<ane::Font> font = std::make_shared<ane::Font>("ArcadeClassic.ttf", 24);
-
-	std::unique_ptr<ane::Text> text = std::make_unique<ane::Text>(font);
-	text->Create(ane::globalRenderer, "NEUMONT", ane::Color(1.0f, 1.0f, 1.0f, 1.0f));
+	std::unique_ptr<SpaceGame> game = std::make_unique<SpaceGame>();
+	game->Initialize();
 	
 	std::vector<Star> stars;
-
 	for(int i = 0; i < 5000; i++) {
 		ane::Vector2 pos(ane::Vector2(ane::random(ane::globalRenderer.GetWidth()), ane::random(ane::globalRenderer.GetHeight())));
 		ane::Vector2 vel(ane::randomf(100, 250), 0.0f);
 
 		stars.push_back(Star(pos, vel));
-	}
-	
-	ane::Scene scene;
-
-	std::unique_ptr<Player> player = std::make_unique<Player>(200.0f, ane::Pi, ane::Transform(ane::vec2(400, 300), 0.0f, 10.0f), ane::globalModelManager.Get("creeper.txt"));
-	player->tag = "Player";
-
-	scene.Add(std::move(player));
-	
-	for(int i = 0; i < 10; i++) {
-		std::unique_ptr enemy = std::make_unique<Enemy>(ane::randomf(75.0f, 150.0f), ane::Pi, ane::Transform(ane::vec2(ane::random(ane::globalRenderer.GetWidth()), ane::random(ane::globalRenderer.GetHeight())), ane::randomf(ane::TwoPi), 6), ane::globalModelManager.Get("enemy.txt"));
-		enemy->tag = "Enemy";
-		scene.Add(std::move(enemy));
 	}
 	
 	// Main game loop
@@ -98,16 +78,18 @@ int main(int argc, char* argv[]) {
 			quit = true;
 		}
 
-		scene.Update(ane::globalTime.GetDeltaTime());
+		// Update Game
+		game->Update(ane::globalTime.GetDeltaTime());
 
+		// Draw Game
 		ane::globalRenderer.SetColor(0, 0, 0, 0);
 		ane::globalRenderer.BeginFrame();
 
 		ane::globalRenderer.SetColor(ane::random(0, 255), 255, 0, 0);
 
-		scene.Draw(ane::globalRenderer);
+		game->Draw(ane::globalRenderer);
 
-		text->Draw(ane::globalRenderer, 400, 300);
+		//text->Draw(ane::globalRenderer, 400, 300);
 		
 		for(Star& star : stars) {
 			star.Update(ane::globalRenderer.GetWidth(), ane::globalRenderer.GetHeight());
@@ -120,7 +102,6 @@ int main(int argc, char* argv[]) {
 	}
 	
 	stars.clear();
-	scene.RemoveAll();
 
 	return 0;
 }
