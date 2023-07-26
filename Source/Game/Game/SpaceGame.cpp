@@ -21,8 +21,19 @@ bool SpaceGame::Initialize() {
 	this->titleText = std::make_unique<ane::Text>(this->font);
 	this->titleText->Create(ane::globalRenderer, "AZTEROIDS", ane::Color(1.0f, 1.0f, 1.0f, 1.0f));
 
+	this->gameOverText = std::make_unique<ane::Text>(this->font);
+	this->gameOverText->Create(ane::globalRenderer, "GAME OVER", ane::Color(1.0f, 1.0f, 1.0f, 1.0f));
+
+	this->livesText = std::make_unique<ane::Text>(this->font);
+	this->livesText->Create(ane::globalRenderer, "LIVES 3", ane::Color(1.0f, 1.0f, 1.0f, 1.0f));
+
+	this->powerupText = std::make_unique<ane::Text>(this->font);
+	this->powerupText->Create(ane::globalRenderer, "", ane::Color(1.0f, 1.0f, 1.0f, 1.0f));
+
 	// Load audio
-	ane::globalAudioSystem.AddAudio("hiss3", "hiss3.wav");
+	ane::globalAudioSystem.AddAudio("hiss3", "hiss3.wav"); 
+	ane::globalAudioSystem.AddAudio("C418 - Aria Math", "C418_AriaMath.wav");
+	ane::globalAudioSystem.PlayOneShot("C418 - Aria Math", true);
 
 	this->scene = std::make_unique<ane::Scene>();
 
@@ -48,15 +59,37 @@ void SpaceGame::Update(float deltaTime) {
 		case State::StartLevel:
 			this->scene->RemoveAll();
 			{
-				std::unique_ptr<Player> player = std::make_unique<Player>(200.0f, ane::Pi, ane::Transform(ane::vec2(400, 300), 0.0f, 10.0f), ane::globalModelManager.Get("creeper.txt"));
+				std::unique_ptr<Player> player = std::make_unique<Player>(7.5f, ane::Pi, ane::Transform(ane::vec2(400, 300), 0.0f, 10.0f), ane::globalModelManager.Get("creeper.txt"));
 				player->tag = "Player";
 				player->game = this;
+				player->SetDamping(0.9f);
 				this->scene->Add(std::move(player));
 			}
 			this->state = State::Game;
 			break;
 		case State::Game:
-			this->spawnTimer += deltaTime;
+			if(this->textTimer != -1.0f) {
+				this->textTimer -= deltaTime;
+			}
+			if(this->textTimer <= 0 && this->textTimer != -1.0f) {
+				this->powerupText->Create(ane::globalRenderer, "", ane::Color(1.0f, 1.0f, 1.0f, 1.0f));
+				this->textTimer = -1.0f;
+			}
+
+			if(this->score >= 5000) {
+				Player* player = this->scene->GetActor<Player>();
+				if(player != nullptr) {
+					// This funky bit of code basically just checks if the player has the DoubleShot powerup
+					auto it = std::find(player->powerups.begin(), player->powerups.end(), Player::Powerups::DoubleShot);
+					if(it == player->powerups.end()) {
+						player->powerups.push_back(Player::Powerups::DoubleShot);
+						this->powerupText->Create(ane::globalRenderer, "YOU HAVE EARNED DOUBLE SHOT!", ane::Color(1.0f, 1.0f, 1.0f, 1.0f));
+						this->textTimer = 5.0f;
+					}
+				}
+			}
+
+			this->spawnTimer += deltaTime + (1.0f * (this->score / 250000.0f));
 			if(this->spawnTimer >= this->spawnTime) {
 				this->spawnTimer = 0.0f;
 
@@ -66,17 +99,28 @@ void SpaceGame::Update(float deltaTime) {
 				this->scene->Add(std::move(enemy));
 			}
 			this->scoreText->Create(ane::globalRenderer, "SCORE " + std::to_string(this->score), ane::Color(1.0f, 1.0f, 1.0f, 1.0f));
+			this->livesText->Create(ane::globalRenderer, "LIVES " + std::to_string(this->lives), ane::Color(1.0f, 1.0f, 1.0f, 1.0f));
 			break;
-		case State::PlayerDead:
-			if(this->lives == 0) {
+		case State::PlayerDeadStart:
+			this->stateTimer = 3.0f;
+			if(this->lives <= 0) {
 				this->state = State::GameOver;
 			} else {
+				this->state = State::PlayerDead;
+			}
+			break;
+		case State::PlayerDead:
+			this->stateTimer -= deltaTime;
+			if(this->stateTimer <= 0.0f) {
 				this->state = State::StartLevel;
 			}
-
 			break;
 		case State::GameOver:
-			std::cout << "OUT OF LIVES!\n";
+			this->stateTimer -= deltaTime;
+			if(this->stateTimer <= 0) {
+				this->scene->RemoveAll();
+				this->state = State::Title;
+			}
 			break;
 		default:
 			break;
@@ -89,7 +133,12 @@ void SpaceGame::Draw(ane::Renderer& renderer) {
 	if(this->state == State::Title) {
 		this->titleText->Draw(renderer, 335, 300);
 	}
+	if(this->state == State::GameOver) {
+		this->gameOverText->Draw(renderer, 335, 300);
+	}
+	this->powerupText->Draw(renderer, 300, 300);
 
+	this->livesText->Draw(renderer, 650, 30);
 	this->scoreText->Draw(renderer, 40, 30);
 	this->scene->Draw(renderer);
 }

@@ -34,11 +34,11 @@ namespace ane {
 		}
 	}
 
-	void AudioSystem::PlayOneShot(const std::string& name) {
+	void AudioSystem::PlayOneShot(const std::string& name, bool loop) {
 		auto iter = this->sounds.find(name);
 		if(iter != this->sounds.end()) {
 			FMOD::Sound* sound = iter->second;
-			sound->setMode(FMOD_LOOP_OFF);
+			sound->setMode(loop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF);
 
 			FMOD::Channel* channel;
 			this->fmodSystem->playSound(sound, 0, false, &channel);

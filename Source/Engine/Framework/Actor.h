@@ -16,8 +16,11 @@ namespace ane {
 			virtual void Update(float deltaTime);
 			virtual void Draw(ane::Renderer& renderer);
 
-			float GetRadius() {return (this->model != nullptr) ? this->model->GetRadius() * this->transform.scale : 0;}
+			float GetRadius() {return (this->model != nullptr) ? this->model->GetRadius() * this->transform.scale : -10000;}
 			virtual void OnCollision(Actor* other) {;}
+
+			void AddForce(const vec2& force) {this->velocity += force;}
+			void SetDamping(float damping) {this->damping = damping;}
 
 			class Scene* scene = nullptr;
 
@@ -27,11 +30,13 @@ namespace ane {
 			friend class Enemy;
 			ane::Transform transform;
 			std::string tag;
-
 			float lifeSpan = -1.0f;
+
 		protected:
 			bool destroyed = false;
-
 			std::shared_ptr<Model> model;
+
+			vec2 velocity;
+			float damping = 0.0f;
 	};
 }

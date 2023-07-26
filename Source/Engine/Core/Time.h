@@ -24,11 +24,16 @@ namespace ane {
 		float GetElapsedSeconds();
 
 		float GetTime() const {return this->time;}
-		float GetDeltaTime() const {return this->deltaTime;}
+		float GetDeltaTime() const {return this->deltaTime * this->timeScale;}
+		float GetUnscaledDeltaTime() const {return this->deltaTime;}
+
+		float GetTimeScale() const {return this->timeScale;}
+		void SetTimeScale(float timeScale) {this->timeScale = timeScale;}
 
 	private:
 		float time;
 		float deltaTime;
+		float timeScale = 1;
 
 		clock::time_point startTime;
 		clock::time_point frameTime;

@@ -11,6 +11,10 @@ namespace ane {
 	}
 
 	void Text::Create(Renderer& renderer, const std::string& text, const Color& color) {
+		if(this->texture != nullptr) {
+			SDL_DestroyTexture(this->texture);
+		}
+
 		SDL_Color c{Color::ToInt(color.r), Color::ToInt(color.g), Color::ToInt(color.b), Color::ToInt(color.a)};
 		SDL_Surface* surface = TTF_RenderText_Solid(this->font->ttfFont, text.c_str(), c);
 		this->texture = SDL_CreateTextureFromSurface(renderer.renderer, surface);

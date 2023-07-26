@@ -4,23 +4,32 @@
 #include "Framework/Game.h"
 #include "Framework/Scene.h"
 #include "Framework/Emitter.h"
-//#include "Input/InputSystem.h"
 
 void Enemy::Update(float deltaTime) {
 	Actor::Update(deltaTime);
 
+	ane::vec2 forward = ane::vec2(0, -1).Rotate(this->transform.rotation);
+
 	Player* player = this->scene->GetActor<Player>();
 	if(player != nullptr) {
 		ane::Vector2 direction = player->transform.position - this->transform.position;
-		this->transform.rotation = direction.Angle() + ane::HalfPi;
+
+		// Turn towards player
+		float turnAngle = ane::vec2::SignedAngle(forward, direction.Normalized());
+		this->transform.rotation += turnAngle * deltaTime;
+		
+		// Check if we are facing the player
+		if(std::fabs(turnAngle) < ane::DegreesToRadians(30.0f)) {
+			// I seeeee youuuuuu
+			this->fireTimer -= deltaTime;
+		}
 	}
 
-	ane::vec2 forward = ane::vec2(0, -1).Rotate(this->transform.rotation);
 	this->transform.position += forward * speed * ane::globalTime.GetDeltaTime();
 	this->transform.position.x = ane::Wrap(this->transform.position.x, static_cast<float> (ane::globalRenderer.GetWidth()));
 	this->transform.position.y = ane::Wrap(this->transform.position.y, static_cast<float> (ane::globalRenderer.GetHeight()));
 
-	this->fireTimer -= deltaTime;
+	//this->fireTimer -= deltaTime;
 	if(this->fireTimer <= 0) {
 		this->fireTimer = this->fireRate;
 		// Fire weapon
@@ -43,7 +52,7 @@ void Enemy::OnCollision(Actor* other) {
 			ane::EmitterData data;
 			data.burst = true;
 			data.burstCount = 100;
-			data.spawnRate = 200.0f;
+			//data.spawnRate = 200.0f;
 			data.angle = 0.0f;
 			data.angleRange = ane::Pi;
 			data.lifeTimeMin = 0.5f;
@@ -56,8 +65,8 @@ void Enemy::OnCollision(Actor* other) {
 
 			ane::Transform transform(this->transform.position, 0, 1);
 			std::unique_ptr<ane::Emitter> emitter = std::make_unique<ane::Emitter>(transform, data);
-			emitter->lifeSpan = 1.0f;
-			scene->Add(std::move(emitter));
+			emitter->lifeSpan = 0.5f;
+			this->scene->Add(std::move(emitter));
 		}
 
 		this->destroyed = true;

@@ -16,10 +16,10 @@ namespace ane {
 			void Update();
 
 			void AddAudio(const std::string& name, const std::string& fileName);
-			void PlayOneShot(const std::string& name);
+			void PlayOneShot(const std::string& name, bool loop = false);
 
 		private:
-			FMOD::System* fmodSystem;
+			FMOD::System* fmodSystem = nullptr;
 			std::map<std::string, FMOD::Sound*> sounds;
 	};
 

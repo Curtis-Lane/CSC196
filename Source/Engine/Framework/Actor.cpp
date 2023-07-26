@@ -9,6 +9,9 @@ namespace ane {
 				this->destroyed = true;
 			}
 		}
+
+		this->transform.position += this->velocity * deltaTime;
+		this->velocity *= std::pow(1.0f - this->damping, deltaTime);
 	}
 
 	void Actor::Draw(ane::Renderer& renderer) {

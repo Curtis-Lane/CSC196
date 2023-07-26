@@ -8,7 +8,7 @@ class Enemy : public ane::Actor {
 		ane::Actor(transform, model) {
 		this->speed = speed;
 		this->turnRate = turnRate;
-		this->fireRate = 2.0f;
+		this->fireRate = 0.5f;
 		this->fireTimer = this->fireRate;
 	}
 

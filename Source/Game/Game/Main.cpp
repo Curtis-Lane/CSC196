@@ -65,7 +65,7 @@ int main(int argc, char* argv[]) {
 
 		stars.push_back(Star(pos, vel));
 	}
-	
+
 	// Main game loop
 	bool quit = false;
 	while(!quit) {
