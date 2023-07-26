@@ -3,6 +3,8 @@
 #include "Rocket.h"
 #include "Framework/Game.h"
 #include "Framework/Scene.h"
+#include "Framework/Emitter.h"
+//#include "Input/InputSystem.h"
 
 void Enemy::Update(float deltaTime) {
 	Actor::Update(deltaTime);
@@ -34,7 +36,30 @@ void Enemy::OnCollision(Actor* other) {
 		health -= 10;
 	}
 	if(health <= 0) {
-		this->game->AddPoints(100);
+ 		this->game->AddPoints(100);
+
+		if(!this->destroyed) {
+			// Spawn particles when an enemy dies
+			ane::EmitterData data;
+			data.burst = true;
+			data.burstCount = 100;
+			data.spawnRate = 200.0f;
+			data.angle = 0.0f;
+			data.angleRange = ane::Pi;
+			data.lifeTimeMin = 0.5f;
+			data.lifeTimeMax = 1.5f;
+			data.speedMin = 50.0f;
+			data.speedMax = 250.0f;
+			data.damping = 0.5f;
+
+			data.color = ane::Color(1, 0, 0, 1);
+
+			ane::Transform transform(this->transform.position, 0, 1);
+			std::unique_ptr<ane::Emitter> emitter = std::make_unique<ane::Emitter>(transform, data);
+			emitter->lifeSpan = 1.0f;
+			scene->Add(std::move(emitter));
+		}
+
 		this->destroyed = true;
 	}
 }

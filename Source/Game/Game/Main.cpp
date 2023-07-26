@@ -1,6 +1,7 @@
 #include "Core/Core.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/ModelManager.h"
+#include "Renderer/ParticleSystem.h"
 #include "Renderer/Font.h"
 #include "Renderer/Text.h"
 #include "Input/InputSystem.h"
@@ -73,6 +74,8 @@ int main(int argc, char* argv[]) {
 		ane::globalInputSystem.Update();
 
 		ane::globalAudioSystem.Update();
+
+		ane::globalParticleSystem.Update(ane::globalTime.GetDeltaTime());
 		 
 		if(ane::globalInputSystem.GetKeyDown(SDL_SCANCODE_ESCAPE)) {
 			quit = true;
@@ -88,6 +91,8 @@ int main(int argc, char* argv[]) {
 		ane::globalRenderer.SetColor(ane::random(0, 255), 255, 0, 0);
 
 		game->Draw(ane::globalRenderer);
+
+		ane::globalParticleSystem.Draw(ane::globalRenderer);
 
 		//text->Draw(ane::globalRenderer, 400, 300);
 		

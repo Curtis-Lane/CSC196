@@ -11,11 +11,12 @@ namespace ane {
 		public:
 			Actor() = default;
 			Actor(const ane::Transform& transform, std::shared_ptr<Model> model) {this->transform = transform; this->model = model;}
+			Actor(const ane::Transform& transform) {this->transform = transform; this->model = nullptr;}
 
 			virtual void Update(float deltaTime);
 			virtual void Draw(ane::Renderer& renderer);
 
-			float GetRadius() {return this->model->GetRadius() * this->transform.scale;}
+			float GetRadius() {return (this->model != nullptr) ? this->model->GetRadius() * this->transform.scale : 0;}
 			virtual void OnCollision(Actor* other) {;}
 
 			class Scene* scene = nullptr;
@@ -23,12 +24,13 @@ namespace ane {
 			class Game* game = nullptr;
 
 			friend class Scene;
+			friend class Enemy;
 			ane::Transform transform;
 			std::string tag;
 
+			float lifeSpan = -1.0f;
 		protected:
 			bool destroyed = false;
-			float lifeSpan = -1.0f;
 
 			std::shared_ptr<Model> model;
 	};

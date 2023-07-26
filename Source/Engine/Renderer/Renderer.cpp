@@ -1,6 +1,8 @@
 #include "Renderer.h"
 
 #include <SDL2-2.28.0/include/SDL_ttf.h>
+#include "Core/Color.h"
+#include "Core/Vector2.h"
 
 namespace ane {
 	Renderer globalRenderer;
@@ -39,12 +41,20 @@ namespace ane {
 		SDL_SetRenderDrawColor(this->renderer, r, g, b, a);
 	}
 
+	void Renderer::SetColor(Color color) {
+		SetColor(Color::ToInt(color.r), Color::ToInt(color.g), Color::ToInt(color.b), Color::ToInt(color.a));
+	}
+
 	void Renderer::DrawLine(int x1, int y1, int x2, int y2) {
 		SDL_RenderDrawLine(this->renderer, x1, y1, x2, y2);
 	}
 
 	void Renderer::DrawLine(float x1, float y1, float x2, float y2) {
 		SDL_RenderDrawLineF(this->renderer, x1, y1, x2, y2);
+	}
+
+	void Renderer::DrawLine(Vector2 vector1, Vector2 vector2) {
+		DrawLine(vector1.x, vector1.y, vector2.x, vector2.y);
 	}
 
 	void Renderer::DrawPoint(int x, int y) {
