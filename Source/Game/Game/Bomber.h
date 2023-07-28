@@ -2,14 +2,15 @@
 
 #include "Framework/Actor.h"
 
-class Enemy : public ane::Actor {
+#include "Audio/AudioSystem.h"
+
+class Bomber : public ane::Actor {
 	public:
-		Enemy(float speed, float turnRate, const ane::Transform& transform, std::shared_ptr<ane::Model> model) :
+		Bomber(float speed, float turnRate, const ane::Transform& transform, std::shared_ptr<ane::Model> model) :
 			ane::Actor(transform, model) {
 			this->speed = speed;
 			this->turnRate = turnRate;
-			this->fireRate = 0.5f;
-			this->fireTimer = this->fireRate;
+			ane::globalAudioSystem.PlayOneShot("creeper_hiss3");
 		}
 
 		void Update(float deltaTime) override;
@@ -18,8 +19,5 @@ class Enemy : public ane::Actor {
 	private:
 		float speed = 0.0f;
 		float turnRate = 0.0f;
-		int health = 25;
-
-		float fireRate = 0.0f;
-		float fireTimer = 0.0f;
+		int health = 15;
 };

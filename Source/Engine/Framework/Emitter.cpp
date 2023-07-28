@@ -5,7 +5,7 @@
 namespace ane {
 	void Emitter::Update(float deltaTime) {
 		Actor::Update(deltaTime);
-
+		
 		// Create burst particles
 		if(this->data.burst) {
 			this->data.burst = false;

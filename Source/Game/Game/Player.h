@@ -7,8 +7,8 @@
 class Player : public ane::Actor {
 	public:
 		enum class Powerups {
-			DoubleShot
-			//
+			DoubleShot,
+			SlowMo
 		};
 
 	public:

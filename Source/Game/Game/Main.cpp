@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
 	ane::setFilePath("assets");
 
 	ane::globalRenderer.Initialize();
-	ane::globalRenderer.CreateWindow("CSC196", 800, 600);
+	ane::globalRenderer.CreateWindow("CRAFTEROIDS", 800, 600);
 
 	ane::globalInputSystem.Initialize();
 	ane::globalAudioSystem.Initialize();
